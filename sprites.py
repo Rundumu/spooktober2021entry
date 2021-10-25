@@ -71,4 +71,4 @@ class Platform(pygame.sprite.Sprite):
 
 
     def update(self):
-        pass
+        self.rect.x, self.rect.y = convert_coords(self.body.position)

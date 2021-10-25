@@ -27,16 +27,19 @@ class Game():
 
     def new_game(self):
 
-        # sprites group
+        # groups
         self.sprites = pygame.sprite.Group()
+        self.plats = pygame.sprite.Group()
 
         # player
         self.player = Player(self, WIDTH / 2, HEIGHT - 10, self.space)
         self.sprites.add(self.player)
 
         # platforms
-        self.plat = Platform(WIDTH / 2, HEIGHT / 2, 100, 50, self.space)
-        self.sprites.add(self.plat)
+        for plat in PLATFORM_LIST:
+            p = Platform(*plat, 100, 50, self.space)
+            self.plats.add(p)
+            self.sprites.add(p)
 
         self.run()
 
