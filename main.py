@@ -22,6 +22,7 @@ class Game():
         self.window = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
         self.space = pymunk.Space()
         self.space.gravity = 0, -50
+        self.handler = self.space.add_collision_handler(1, 2)
 
         
 
@@ -32,12 +33,12 @@ class Game():
         self.plats = pygame.sprite.Group()
 
         # player
-        self.player = Player(self, WIDTH / 2, HEIGHT - 10, self.space)
+        self.player = Player(self, WIDTH / 2, HEIGHT - 10, self.space, 1)
         self.sprites.add(self.player)
 
         # platforms
         for plat in PLATFORM_LIST:
-            p = Platform(*plat, 100, 50, self.space)
+            p = Platform(*plat, 100, 50, self.space, 2)
             self.plats.add(p)
             self.sprites.add(p)
 
@@ -60,6 +61,7 @@ class Game():
         pygame.display.flip()
 
     def update(self):
+        self.handler.begin = collide
 
         self.sprites.update()
 

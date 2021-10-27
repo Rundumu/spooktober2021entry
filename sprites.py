@@ -6,9 +6,13 @@ from pymunk import Vec2d
 def convert_coords(point):
     return point[0], HEIGHT - point[1]
 
+def collide(arbiter, space, data):
+    print("hello")
+    return True
+
 class Player(pygame.sprite.Sprite):
     
-    def __init__(self, game, x, y, space):
+    def __init__(self, game, x, y, space, collision_type):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
         self.image = pygame.Surface((50, 50))
@@ -25,7 +29,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.x, self.rect.y = self.body.position
         self.space = space
         self.shape = pymunk.Circle(self.body, 50)
-        self.shape.density = 1
+        self.shape.density = 10
+        self.shape.collision_type = collision_type
         self.space.add(self.body, self.shape)
 
 
@@ -41,12 +46,9 @@ class Player(pygame.sprite.Sprite):
             self.body.velocity = -600, 0
         if right == True:
             self.body.velocity = 600, 0
-
-
-
-
-
     
+
+   
 
 
         
@@ -54,7 +56,7 @@ class Player(pygame.sprite.Sprite):
         
 class Platform(pygame.sprite.Sprite):
 
-    def __init__(self, x, y, w, h, space):
+    def __init__(self, x, y, w, h, space, collision_type):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((w, h))
         self.image.fill(GREEN)
@@ -65,8 +67,9 @@ class Platform(pygame.sprite.Sprite):
         self.body.position = x, y
         self.rect.x, self.rect.y = self.body.position
         self.space = space
-        self.shape = pymunk.Poly.create_box(self.body, size=(w, h))
+        self.shape = pymunk.Poly.create_box(self.body, size=(w / 2, h / 2))
         self.shape.density = 1
+        self.shape.collision_type = collision_type
         self.space.add(self.body, self.shape)
 
 
