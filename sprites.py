@@ -30,6 +30,7 @@ class Player(pygame.sprite.Sprite):
         self.space = space
         self.shape = pymunk.Circle(self.body, 50)
         self.shape.density = 10
+        self.shape.elasticity = 0
         self.shape.collision_type = collision_type
         self.space.add(self.body, self.shape)
 
@@ -38,14 +39,17 @@ class Player(pygame.sprite.Sprite):
 
         # gravity 
         self.rect.x, self.rect.y = convert_coords(self.body.position)
+
+    def jump(self):
+        pass
     
     def move(self, up= False, left=False, right=False):
         if up == True:
-            self.body.velocity = 0, 600
+            self.body.velocity = 0, 100
         if left == True:
-            self.body.velocity = -600, 0
+            self.body.velocity = -100, 0
         if right == True:
-            self.body.velocity = 600, 0
+            self.body.velocity = 100, 0
     
 
    
@@ -67,11 +71,27 @@ class Platform(pygame.sprite.Sprite):
         self.body.position = x, y
         self.rect.x, self.rect.y = self.body.position
         self.space = space
-        self.shape = pymunk.Poly.create_box(self.body, size=(w / 2, h / 2))
-        self.shape.density = 1
+        self.vs = [(-w/2,-h/2), ((w/2),-(h/2) + 10), (w/2,h/2), ((-w/2),(h/2) + 10)]
+        self.shape = pymunk.Poly(self.body, self.vs)
+        self.shape.density = 100
+        self.shape.friction = 2.0
         self.shape.collision_type = collision_type
         self.space.add(self.body, self.shape)
 
 
     def update(self):
         self.rect.x, self.rect.y = convert_coords(self.body.position)
+
+class Ground(pygame.sprite.Sprite):
+
+    def __init__(self, x, y, w, h):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((w, h))
+        self.image.fill(GREEN)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+    
+    def update(self):
+        pass

@@ -1,3 +1,4 @@
+from math import e
 from pygame.sprite import Sprite
 from settings import *
 from sprites import *
@@ -5,6 +6,7 @@ from sprites import *
 from os import path
 import pygame
 import pymunk
+import random
 
 
 class Game():
@@ -31,16 +33,29 @@ class Game():
         # groups
         self.sprites = pygame.sprite.Group()
         self.plats = pygame.sprite.Group()
+        self.floor = pygame.sprite.Group()
 
         # player
         self.player = Player(self, WIDTH / 2, HEIGHT - 10, self.space, 1)
         self.sprites.add(self.player)
 
         # platforms
-        for plat in PLATFORM_LIST:
-            p = Platform(*plat, 100, 50, self.space, 2)
-            self.plats.add(p)
+        self.ground = Platform(0, 50, WIDTH, 50)
+
+        self.sprites.add(self.ground)
+        self.floor.add(self.ground)
+
+        for i in range(6):
+            width = random.randrange(50, 100)
+            p = Platform(random.randrange(200, WIDTH-width), 
+                        random.randrange(100, HEIGHT - 50), 
+                        random.randrange(100, 150),
+                        50,
+                        self.space,
+                        2)
+
             self.sprites.add(p)
+            self.plats.add(p)
 
         self.run()
 
@@ -60,7 +75,15 @@ class Game():
 
         pygame.display.flip()
 
-    def update(self):
+    def update(self):     
+        
+        hits = pygame.sprite.spritecollide(self.player, self.floor, False)
+        
+        if hits:
+            if self.player.rect.bottom >= hits[0].rect.top:
+                self.player.rect.bottom = hits[0].rect.top
+
+
         self.handler.begin = collide
 
         self.sprites.update()
@@ -84,8 +107,12 @@ class Game():
                     self.player.move(right=True)
                 if event.key == pygame.K_LEFT:
                     self.player.move(left=True)
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_SPACE:
                     self.player.move(up=True)
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    self.player.move(up=False)                
 
 
 
