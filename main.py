@@ -42,7 +42,11 @@ class Game():
 
         
         # barriers
-        self.left = Barrier(self, (10, HEIGHT), (0, 0), 20, self.space, 2)
+        self.left = Barrier(self, (0, HEIGHT), (0, 0), 20, self.space, 2)
+        self.top = Barrier(self, (0, 0), (1000, WIDTH), 20, self.space, 2)
+        self.bottom = Barrier(self, (10, HEIGHT), (0, 0), 20, self.space, 2)
+        self.right = Barrier(self, (10, HEIGHT), (0, 0), 20, self.space, 2)
+
 
         # enemies
         width = random.randrange(50, 100)
@@ -70,6 +74,8 @@ class Game():
 
         [e.draw() for e in self.enemies]
         self.left.draw()
+        self.top.draw()
+
 
         self.sprites.draw(self.window)
 
