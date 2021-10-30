@@ -40,6 +40,12 @@ class Player(pygame.sprite.Sprite):
         # gravity 
         self.rect.x, self.rect.y = convert_coords(self.body.position)
 
+        # barrier
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > WIDTH:
+            self.rect.right = WIDTH
+
     def jump(self):
         pass
     
@@ -50,48 +56,46 @@ class Player(pygame.sprite.Sprite):
             self.body.velocity = -100, 0
         if right == True:
             self.body.velocity = 100, 0
+         
+
     
 
-   
+class Enemies():
 
-
-        
-
-        
-class Platform(pygame.sprite.Sprite):
-
-    def __init__(self, x, y, w, h, space, collision_type):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((w, h))
-        self.image.fill(GREEN)
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.body = pymunk.Body(body_type=pymunk.Body.STATIC)
+    def __init__(self, game, x, y, space, collision_type):
+        #self.image = pygame.Surface((w, h))
+        #self.image.fill(RED)
+        self.game = game
+        self.body = pymunk.Body(body_type=pymunk.Body.DYNAMIC)
         self.body.position = x, y
-        self.rect.x, self.rect.y = self.body.position
         self.space = space
-        self.vs = [(-w/2,-h/2), ((w/2),-(h/2) + 10), (w/2,h/2), ((-w/2),(h/2) + 10)]
-        self.shape = pymunk.Poly(self.body, self.vs)
-        self.shape.density = 100
-        self.shape.friction = 2.0
+        self.shape = pymunk.Circle(self.body, 50)
+        self.shape.density = 1
+        self.shape.elasticity = 10
         self.shape.collision_type = collision_type
         self.space.add(self.body, self.shape)
-
-
-    def update(self):
-        self.rect.x, self.rect.y = convert_coords(self.body.position)
-
-class Ground(pygame.sprite.Sprite):
-
-    def __init__(self, x, y, w, h):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((w, h))
-        self.image.fill(GREEN)
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-
     
-    def update(self):
-        pass
+    def draw(self):
+        x, y = convert_coords(self.body.position)
+        pygame.draw.circle(self.game.window, (255, 0, 0), convert_coords(self.body.position), 15)
+
+class Barrier():
+
+    def __init__(self, game, a, b, radius, space, collision_type):
+        #self.image = pygame.Surface((w, h))
+        #self.image.fill(RED)
+        self.game = game
+        self.body = pymunk.Body(body_type=pymunk.Body.STATIC)
+        self.space = space
+        self.radius = radius
+        self.shape = pymunk.Segment(self.body, a, b, self.radius)
+        self.shape.density = 1
+        self.shape.elasticity = 10
+        self.shape.collision_type = collision_type
+        self.space.add(self.body, self.shape)
+    
+    def draw(self):
+        pygame.draw.line(self.game.window, (255, 255, 255), convert_coords(self.shape.a), convert_coords(self.shape.b), self.radius)
+
+        
+        

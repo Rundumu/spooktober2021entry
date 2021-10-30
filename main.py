@@ -1,4 +1,3 @@
-from math import e
 from pygame.sprite import Sprite
 from settings import *
 from sprites import *
@@ -32,31 +31,29 @@ class Game():
 
         # groups
         self.sprites = pygame.sprite.Group()
-        self.plats = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
         self.floor = pygame.sprite.Group()
 
         # player
-        self.player = Player(self, WIDTH / 2, HEIGHT - 10, self.space, 1)
+        self.player = Player(self, WIDTH / 2, 150, self.space, 1)
         self.sprites.add(self.player)
 
         # platforms
-        self.ground = Platform(0, 50, WIDTH, 50)
 
-        self.sprites.add(self.ground)
-        self.floor.add(self.ground)
+        
+        # barriers
+        self.left = Barrier(self, (10, HEIGHT), (0, 0), 20, self.space, 2)
 
-        for i in range(6):
-            width = random.randrange(50, 100)
-            p = Platform(random.randrange(200, WIDTH-width), 
-                        random.randrange(100, HEIGHT - 50), 
-                        random.randrange(100, 150),
-                        50,
+        # enemies
+        width = random.randrange(50, 100)
+
+        self.enemies = [Enemies(self, 
+                        random.randrange(50, WIDTH-width),
+                        random.randrange(700, 750),
                         self.space,
-                        2)
-
-            self.sprites.add(p)
-            self.plats.add(p)
-
+                        2) for i in range(10)]
+            
+        
         self.run()
 
     def run(self):
@@ -70,18 +67,24 @@ class Game():
     def draw(self):
         # draw
         self.window.fill(BLACK)
-        
+
+        [e.draw() for e in self.enemies]
+        self.left.draw()
+
         self.sprites.draw(self.window)
 
         pygame.display.flip()
 
     def update(self):     
-        
-        hits = pygame.sprite.spritecollide(self.player, self.floor, False)
-        
-        if hits:
-            if self.player.rect.bottom >= hits[0].rect.top:
-                self.player.rect.bottom = hits[0].rect.top
+        print(self.player.rect.top)
+        if self.player.rect.top <= 100:
+            self.player.rect.y += max(abs(10), 2)
+
+            for plat in self.plats:
+                plat.rect.y += max(abs(10), 2)
+                if plat.rect.top >= HEIGHT:
+                    plat.kill()
+
 
 
         self.handler.begin = collide

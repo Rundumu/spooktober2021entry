@@ -7,6 +7,7 @@ FPS = 60
 BLACK = (0, 0, 0)
 YELLOW = (200, 200, 200)
 GREEN = (0, 200, 0)
+RED = (200, 0, 0)
 
 # Physics
 GRAVITY = 1
